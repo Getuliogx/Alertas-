@@ -1,31 +1,58 @@
-# Alerta de Filmes — GitHub Pages
+# Alerta de Filmes — versão de alta precisão
 
-Site estático para pesquisar filmes na TMDB e criar mensagens de alerta de conteúdo.
+Frontend estático para GitHub Pages.
 
-## Como publicar no GitHub Pages
+## O que mudou
 
-1. Crie um repositório novo no GitHub.
-2. Envie `index.html`, `style.css` e `app.js` para a raiz.
-3. Abra **Settings → Pages**.
-4. Em **Build and deployment**, selecione **Deploy from a branch**.
-5. Escolha a branch `main` e a pasta `/ (root)`.
-6. Salve. O GitHub mostrará o endereço do site.
+A versão anterior tentava transformar palavras-chave da TMDB em avisos automáticos. Isso podia deixar passar nudez, gore, linguagem forte etc.
 
-## TMDB
+Esta versão separa os dados em três níveis:
 
-Ao abrir o site, clique em **TMDB** e cole sua API Key v3.
-A chave é salva com `localStorage` somente no navegador atual. Ela não fica escrita no repositório.
+- **Confirmado**: votação comunitária forte da fonte especializada.
+- **Provável**: votação comunitária suficiente, mas menor.
+- **Indício**: gênero, sinopse, palavras-chave ou resenhas da TMDB. Fica desmarcado por padrão.
+- **Manual**: você pode adicionar/remover qualquer aviso.
 
-O site usa:
-- `/search/movie`
-- `/movie/{movie_id}`
-- `append_to_response=keywords,release_dates`
-- imagens em `image.tmdb.org`
+A ideia é evitar dois problemas: inventar aviso que não existe e deixar um palpite da TMDB aparecer como se fosse certeza.
 
-## Importante sobre os alertas
+## Fontes
 
-A TMDB não é uma base dedicada de avisos de conteúdo cena por cena. O site usa gênero e palavras-chave como **sugestão automática**, além da classificação brasileira quando disponível. Revise os checkboxes antes de publicar o aviso.
+### TMDB
+Necessária para pesquisa, pôster, título, sinopse, gêneros, classificação e palavras-chave.
 
-## Créditos
+A chave usa a mesma entrada de `localStorage` da versão anterior:
 
-Este produto usa a API da TMDB, mas não é endossado nem certificado pela TMDB.
+`tmdb_api_key_v3`
+
+Se o site for publicado no mesmo domínio do GitHub Pages, o navegador normalmente continuará com a chave já salva.
+
+### DoesTheDogDie
+Opcional, mas recomendado para avisos detalhados. Cada visitante deve usar a própria chave.
+
+A chave é salva apenas no navegador em:
+
+`dttd_api_key_v3`
+
+Não coloque a chave no código ou no repositório público.
+
+O site procura diretamente pelo `tmdbId`, reduzindo o risco de misturar remakes ou filmes com o mesmo nome.
+
+## Publicação
+
+Substitua no seu repositório os arquivos:
+
+- `index.html`
+- `style.css`
+- `app.js`
+
+Depois aguarde o GitHub Pages atualizar.
+
+## Observação
+
+Nenhuma base de terceiros garante 100% de cobertura para todos os filmes. Por isso o site mostra a fonte e a força da evidência em vez de chamar inferências de "confirmadas".
+
+Quando dados do DoesTheDogDie são exibidos, a atribuição exigida aparece na mesma interface:
+
+`Powered by DoesTheDogDie.com`
+
+O plano gratuito dessa API é destinado a uso não comercial e tem limites próprios.

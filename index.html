@@ -2,138 +2,179 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0b0d12">
-  <meta name="description" content="Gerador de alertas de conteúdo para filmes usando dados da TMDB.">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090b10">
   <title>Alerta de Filmes</title>
+  <meta name="description" content="Gerador de avisos de conteúdo para filmes com TMDB e fonte especializada opcional.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="app">
-    <header class="topbar">
+    <header class="hero">
       <div>
         <p class="eyebrow">ALERTA DE CONTEÚDO</p>
-        <h1>Gerador de alertas para filmes</h1>
-        <p class="subtitle">Pesquise o filme na TMDB, revise os avisos e gere uma mensagem pronta.</p>
+        <h1>Alerta de Filmes</h1>
+        <p class="heroText">Busca o filme, cruza as fontes disponíveis e só chama de confirmado o que tem evidência.</p>
       </div>
-      <button id="settingsBtn" class="ghost small" type="button">⚙ TMDB</button>
+      <button id="openSettings" class="secondary compact">⚙ Fontes</button>
     </header>
 
-    <section id="settingsPanel" class="card settings hidden">
-      <div class="section-head">
+    <section id="settings" class="panel hidden">
+      <div class="panelHead">
         <div>
-          <h2>Chave da TMDB</h2>
-          <p>A chave fica somente neste navegador e não é gravada nos arquivos do GitHub.</p>
+          <p class="eyebrow">CONFIGURAÇÃO</p>
+          <h2>Fontes de dados</h2>
         </div>
-        <button id="closeSettingsBtn" class="icon-btn" type="button" aria-label="Fechar">×</button>
+        <button id="closeSettings" class="iconBtn" aria-label="Fechar">×</button>
       </div>
-      <div class="key-row">
-        <input id="apiKeyInput" type="password" placeholder="Cole sua API Key v3 da TMDB" autocomplete="off">
-        <button id="saveKeyBtn" class="primary" type="button">Salvar</button>
+
+      <div class="sourceBox">
+        <div class="sourceTop">
+          <div>
+            <strong>TMDB</strong>
+            <span class="tag required">necessária</span>
+          </div>
+          <span id="tmdbState" class="state">não configurada</span>
+        </div>
+        <p>Usada para localizar o filme, pôster, título, sinopse, classificação e palavras-chave.</p>
+        <div class="inputRow">
+          <input id="tmdbKey" type="password" placeholder="API Key v3 da TMDB" autocomplete="off">
+          <button id="saveTmdb" class="primary">Salvar</button>
+        </div>
       </div>
-      <p id="keyStatus" class="status"></p>
+
+      <div class="sourceBox">
+        <div class="sourceTop">
+          <div>
+            <strong>DoesTheDogDie</strong>
+            <span class="tag best">precisão máxima</span>
+          </div>
+          <span id="dttdState" class="state">não configurada</span>
+        </div>
+        <p>Fonte especializada em gatilhos e avisos de conteúdo. Cada pessoa usa a própria chave; ela fica somente no navegador.</p>
+        <div class="inputRow">
+          <input id="dttdKey" type="password" placeholder="Chave da API DoesTheDogDie" autocomplete="off">
+          <button id="saveDttd" class="primary">Salvar</button>
+        </div>
+        <div class="miniActions">
+          <a class="linkBtn" href="https://www.doesthedogdie.com/api" target="_blank" rel="noopener">Obter chave gratuita</a>
+          <button id="removeDttd" class="textBtn">Remover chave</button>
+        </div>
+        <small class="hint">A modalidade gratuita é para uso não comercial e possui limites definidos pelo serviço.</small>
+      </div>
+
+      <p id="settingsStatus" class="status"></p>
     </section>
 
-    <section class="card search-card">
-      <label for="movieSearch">Pesquisar filme</label>
-      <div class="search-row">
-        <input id="movieSearch" type="search" placeholder="Ex.: Pânico" autocomplete="off">
-        <button id="searchBtn" class="primary" type="button">Pesquisar</button>
+    <section class="panel searchPanel">
+      <label for="query">Pesquisar filme</label>
+      <div class="searchRow">
+        <input id="query" type="search" placeholder="Ex.: Midsommar, Pânico, O Iluminado…" autocomplete="off">
+        <button id="search" class="primary">Pesquisar</button>
       </div>
       <p id="searchStatus" class="status"></p>
-      <div id="results" class="results" aria-live="polite"></div>
+      <div id="results" class="results"></div>
     </section>
 
-    <section id="editor" class="editor hidden">
-      <article class="card movie-card">
+    <section id="workspace" class="workspace hidden">
+      <section class="panel moviePanel">
         <img id="poster" class="poster" alt="">
-        <div class="movie-info">
+        <div class="movieData">
           <p class="eyebrow">FILME SELECIONADO</p>
-          <h2 id="movieTitle">—</h2>
-          <p id="movieMeta" class="meta"></p>
+          <h2 id="title"></h2>
+          <p id="meta" class="meta"></p>
           <p id="overview" class="overview"></p>
           <div id="genres" class="chips"></div>
         </div>
-      </article>
+      </section>
 
-      <section class="card">
-        <div class="section-head">
+      <section class="panel">
+        <div class="panelHead warningsHead">
           <div>
-            <h2>Avisos de conteúdo</h2>
-            <p>Os marcados automaticamente são sugestões baseadas nos dados disponíveis na TMDB. Revise antes de usar.</p>
+            <p class="eyebrow">ANÁLISE</p>
+            <h2>Avisos encontrados</h2>
+            <p class="sub">Os avisos são agrupados para não gerar uma mensagem enorme. Você pode ligar ou desligar qualquer item.</p>
           </div>
-          <span id="autoBadge" class="badge">Sugestão automática</span>
+          <div id="qualityBadge" class="quality partial">Parcial</div>
         </div>
 
-        <div id="warningGrid" class="warning-grid">
-          <label class="warning"><input type="checkbox" value="violência"><span><b>Violência</b><small>brigas, ataques ou agressões</small></span></label>
-          <label class="warning"><input type="checkbox" value="sangue e ferimentos"><span><b>Sangue e ferimentos</b><small>ferimentos ou imagens de sangue</small></span></label>
-          <label class="warning"><input type="checkbox" value="gore ou imagens gráficas"><span><b>Gore / imagens gráficas</b><small>violência gráfica ou perturbadora</small></span></label>
-          <label class="warning"><input type="checkbox" value="sustos e cenas de tensão"><span><b>Sustos / tensão</b><small>jumpscares e suspense intenso</small></span></label>
-          <label class="warning"><input type="checkbox" value="linguagem forte"><span><b>Linguagem forte</b><small>palavrões ou linguagem ofensiva</small></span></label>
-          <label class="warning"><input type="checkbox" value="conteúdo sexual"><span><b>Conteúdo sexual</b><small>situações ou referências sexuais</small></span></label>
-          <label class="warning"><input type="checkbox" value="nudez"><span><b>Nudez</b><small>nudez parcial ou explícita</small></span></label>
-          <label class="warning"><input type="checkbox" value="uso de álcool"><span><b>Álcool</b><small>consumo de bebidas alcoólicas</small></span></label>
-          <label class="warning"><input type="checkbox" value="uso de drogas"><span><b>Drogas</b><small>uso ou referências a drogas</small></span></label>
-          <label class="warning"><input type="checkbox" value="tabagismo"><span><b>Tabagismo</b><small>cigarros ou outros produtos de tabaco</small></span></label>
-          <label class="warning"><input type="checkbox" value="temas sensíveis ou perturbadores"><span><b>Temas sensíveis</b><small>assuntos potencialmente desconfortáveis</small></span></label>
-          <label class="warning"><input type="checkbox" value="luzes piscantes"><span><b>Luzes piscantes</b><small>efeitos visuais intermitentes</small></span></label>
+        <div id="sourceNotice" class="notice"></div>
+        <div id="warnings" class="warnings"></div>
+
+        <details class="manualDetails">
+          <summary>+ Adicionar aviso manual</summary>
+          <div id="manualWarnings" class="manualGrid"></div>
+        </details>
+      </section>
+
+      <section class="panel">
+        <div class="panelHead">
+          <div>
+            <p class="eyebrow">MENSAGEM</p>
+            <h2>Texto final</h2>
+          </div>
         </div>
 
-        <div class="two-cols">
+        <div class="options">
           <div>
-            <label for="intensity">Intensidade do aviso</label>
-            <select id="intensity">
-              <option value="leve">Leve</option>
-              <option value="moderada" selected>Moderada</option>
-              <option value="forte">Forte</option>
-            </select>
-          </div>
-          <div>
-            <label for="messageStyle">Estilo da mensagem</label>
+            <label for="messageStyle">Estilo</label>
             <select id="messageStyle">
-              <option value="natural" selected>Natural</option>
-              <option value="curta">Curta</option>
+              <option value="direto" selected>Direto</option>
+              <option value="natural">Natural</option>
+              <option value="curto">Bem curto</option>
               <option value="formal">Formal</option>
             </select>
           </div>
+          <div>
+            <label for="prefix">Título do aviso</label>
+            <select id="prefix">
+              <option value="alerta" selected>⚠️ Aviso de conteúdo</option>
+              <option value="atencao">⚠️ Atenção</option>
+              <option value="sem">Sem título</option>
+            </select>
+          </div>
         </div>
 
-        <label for="extraNote">Observação extra <span class="muted">(opcional)</span></label>
-        <textarea id="extraNote" rows="3" placeholder="Ex.: Algumas cenas podem ser desconfortáveis para espectadores sensíveis."></textarea>
+        <label for="extra">Observação extra <span class="muted">(opcional)</span></label>
+        <textarea id="extra" rows="2" placeholder="Ex.: Se algum desses temas incomoda você, recomendamos cautela."></textarea>
+
+        <textarea id="output" class="output" rows="7"></textarea>
 
         <div class="actions">
-          <button id="generateBtn" class="primary" type="button">Gerar mensagem</button>
-          <button id="clearWarningsBtn" class="ghost" type="button">Desmarcar avisos</button>
-        </div>
-      </section>
-
-      <section class="card output-card">
-        <p class="eyebrow">MENSAGEM GERADA</p>
-        <textarea id="output" rows="7" spellcheck="true"></textarea>
-        <div class="actions">
-          <button id="copyBtn" class="primary" type="button">Copiar mensagem</button>
-          <button id="screenBtn" class="ghost" type="button">Ver alerta em tela cheia</button>
+          <button id="copy" class="primary">Copiar mensagem</button>
+          <button id="fullscreen" class="secondary">Exibir em tela cheia</button>
         </div>
         <p id="copyStatus" class="status"></p>
+      </section>
+
+      <section id="evidencePanel" class="panel evidencePanel">
+        <div class="panelHead">
+          <div>
+            <p class="eyebrow">TRANSPARÊNCIA</p>
+            <h2>Como o site chegou nisso</h2>
+          </div>
+        </div>
+        <div id="evidence"></div>
+        <a id="dttdAttribution" class="attribution hidden" href="https://www.doesthedogdie.com" target="_blank" rel="noopener">Powered by DoesTheDogDie.com</a>
       </section>
     </section>
   </main>
 
-  <div id="alertScreen" class="alert-screen hidden" role="dialog" aria-modal="true">
-    <div id="screenBackdrop" class="screen-backdrop"></div>
-    <button id="closeScreenBtn" class="screen-close" type="button" aria-label="Fechar">×</button>
-    <div class="screen-content">
-      <p class="screen-kicker">AVISO DE CONTEÚDO</p>
-      <h2 id="screenTitle"></h2>
-      <p id="screenMessage"></p>
-      <p id="screenRating" class="screen-rating"></p>
-    </div>
-  </div>
-
   <footer>
     <span>Este produto usa a API da TMDB, mas não é endossado nem certificado pela TMDB.</span>
   </footer>
+
+  <div id="screen" class="screen hidden">
+    <div id="screenBg" class="screenBg"></div>
+    <button id="closeScreen" class="screenClose" aria-label="Fechar">×</button>
+    <div class="screenCard">
+      <p class="screenEyebrow">AVISO DE CONTEÚDO</p>
+      <h2 id="screenTitle"></h2>
+      <p id="screenText"></p>
+      <p id="screenRating"></p>
+      <a id="screenDttd" class="screenSource hidden" href="https://www.doesthedogdie.com" target="_blank" rel="noopener">Powered by DoesTheDogDie.com</a>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

@@ -1,0 +1,15 @@
+CORREÇÃO — GITHUB PAGES
+
+1. Apague os arquivos antigos do repositório (index.html, app.js e style.css).
+2. Envie SOMENTE o index.html desta pasta para a raiz do repositório.
+3. Aguarde o GitHub Pages atualizar.
+4. Abra o site e faça uma atualização forçada/recarregue a página.
+
+Nesta versão:
+- CSS e JavaScript estão dentro do próprio index.html.
+- Não depende de app.js nem style.css externos.
+- A chave TMDB já está configurada.
+- Pesquisa funciona imediatamente.
+- Analisa TMDB em português + inglês.
+- Tenta cruzar o enredo com Wikipédia em português + inglês.
+- Gera e copia a mensagem.

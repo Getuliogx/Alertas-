@@ -1,15 +1,19 @@
-CORREÇÃO — GITHUB PAGES
+CORREÇÃO DE PRECISÃO V2
 
-1. Apague os arquivos antigos do repositório (index.html, app.js e style.css).
-2. Envie SOMENTE o index.html desta pasta para a raiz do repositório.
-3. Aguarde o GitHub Pages atualizar.
-4. Abra o site e faça uma atualização forçada/recarregue a página.
+Use SOMENTE o index.html deste ZIP na raiz do GitHub Pages.
 
-Nesta versão:
-- CSS e JavaScript estão dentro do próprio index.html.
-- Não depende de app.js nem style.css externos.
-- A chave TMDB já está configurada.
-- Pesquisa funciona imediatamente.
-- Analisa TMDB em português + inglês.
-- Tenta cruzar o enredo com Wikipédia em português + inglês.
-- Gera e copia a mensagem.
+O que foi corrigido:
+- A Wikipédia NÃO é mais analisada inteira.
+- O site procura especificamente a seção "Enredo / Plot".
+- Palavras soltas da Wikipédia não viram mais automaticamente aviso forte.
+- Resenhas foram removidas da análise (causavam falsos positivos).
+- "Violência sexual" só entra com termos explícitos como estupro/sexual assault.
+- Diagnósticos e palavras como "bipolar" não viram automaticamente "crise de saúde mental".
+- Itens fracos ficam em "Possíveis / revisar" e DESMARCADOS.
+- A mensagem final agrupa coisas relacionadas:
+  violência + gore
+  suicídio + morte
+  sexo + nudez
+  sustos + temas perturbadores
+- O formato padrão é curto, sem cabeçalho.
+- Continua sendo um único index.html, sem app.js/style.css externos.
